@@ -21,9 +21,13 @@ const rows = canvas.height / resolution;
 const black = 'black';
 const white = 'white';
 
+// Setting intverval of 200 ms to call the function makeGrid
+
  setInterval(makeGrid, 200);
 
-//makeGrid();
+
+
+// Since JS does not support multy arrays, I made an array with params inside that  will generate an int of 0 and 1 on a random principle.
 
 function makeGrid(){
 
@@ -35,7 +39,7 @@ function makeGrid(){
 }
 
 
-
+//  Here I am iterating thru the Grid array and I am filling all the elements with color
 function drawOrganisms(grid){
     console.log(grid);
 
@@ -59,8 +63,11 @@ function drawOrganisms(grid){
 
 }
 
+// Here I iterate thru the returned grid and making acopy of the array with the Map function
+// then I check the the neighbours with a third and fourth (for cicle).  
+
 function getNeighbours(grid){
-    let arr = grid.map(arr => [...arr]);
+    let arr_neighbour = grid.map(arr => [...arr]);
     let number_of_neigbours = 0;
     let neighbour;
     for(let c = 0; c < grid.length; c++){
@@ -75,14 +82,15 @@ function getNeighbours(grid){
                     }
                 }
             }
+            //console.log(cell);
             if(cell === 1 && number_of_neigbours < 2){
-                arr[c][r] = 0;
+                arr_neighbour[c][r] = 0;
 
             }else if(cell === 1 && number_of_neigbours > 3){
-                arr[c][r] = 0;
+                arr_neighbour[c][r] = 0;
             }else if(cell == 0 && number_of_neigbours === 3){
-                arr[c][r] = 1;
+                arr_neighbour[c][r] = 1;
             }
         }
     }
-}
+} 
