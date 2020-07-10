@@ -11,8 +11,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 
-const resolution = 10;
-canvas.width = 500;
+const resolution = 5;
+canvas.width = 1350;
 canvas.height = 500;
 
 const cols = canvas.width / resolution;
@@ -21,6 +21,9 @@ const rows = canvas.height / resolution;
 const black = 'black';
 const white = 'white';
 
+ setInterval(makeGrid, 200);
+
+//makeGrid();
 
 function makeGrid(){
 
@@ -43,7 +46,7 @@ function drawOrganisms(grid){
 
             ctx.beginPath();
             ctx.rect(c * resolution, r * resolution, resolution, resolution);
-            if(cell){
+            if(cell == 1){
                 ctx.fillStyle = black;
             }else{
                 ctx.fillStyle = white;
@@ -51,6 +54,35 @@ function drawOrganisms(grid){
             ctx.fill();
         }
     }
+    
+    getNeighbours(grid);
 
 }
-makeGrid();
+
+function getNeighbours(grid){
+    let arr = grid.map(arr => [...arr]);
+    let number_of_neigbours = 0;
+    let neighbour;
+    for(let c = 0; c < grid.length; c++){
+        for(let r = 0; r < grid.length; r++){
+            let cell = grid[c][r];
+            for(var x = -1; x < 2; x++){
+                for(y = -1; y < 2; y++){
+                    if(x === 0 && y === 0) continue;
+                    if(c + x >= 0 && r + y >=0 && c + x < cols && r + y < rows){
+                        neighbour = grid[c + x][r + y];
+                        number_of_neigbours += neighbour;
+                    }
+                }
+            }
+            if(cell === 1 && number_of_neigbours < 2){
+                arr[c][r] = 0;
+
+            }else if(cell === 1 && number_of_neigbours > 3){
+                arr[c][r] = 0;
+            }else if(cell == 0 && number_of_neigbours === 3){
+                arr[c][r] = 1;
+            }
+        }
+    }
+}
