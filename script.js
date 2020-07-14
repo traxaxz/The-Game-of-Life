@@ -1,96 +1,108 @@
-/*
-        RULES:
+let canvas = document.getElementById('canvas');
+canvas.width = 1360;
+canvas.height = 700;
 
-    --Any live cell with fewer than two live neighbours dies, as if by underpopulation.
--   --Any live cell with two or three live neighbours lives on to the next generation.
-    --Any live cell with more than three live neighbours dies, as if by overpopulation.
-    --Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-*/
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext('2d');
-
-const resolution = 5;
-canvas.width = 1350;
-canvas.height = 500;
-
-const cols = canvas.width / resolution;
-const rows = canvas.height / resolution;
-
-const black = 'black';
-const white = 'white';
-
-// Setting intverval of 200 ms to call the function makeGrid
-
- setInterval(makeGrid, 200);
+let ctx = canvas.getContext('2d');
+let resolution = 10;
+let cols = canvas.width / resolution;
+let rows = canvas.height / resolution;
 
 
 
-// Since JS does not support multy arrays, I made an array with params inside that  will generate an int of 0 and 1 on a random principle.
 
-function makeGrid(){
+// Since JS does not have a multidimentional array, I am creating an array in an array. 
+function createMArray(){
+    return new Array(cols).fill(0).map(()=> new Array(rows).fill(0).map(()=> Math.floor(Math.random() * 2)));
+}
 
-    let grid =  new Array(cols).fill(0)
-    .map(()=> new Array(rows).fill(0)
-    .map(() => Math.floor(Math.random()*2)));
+// assigning the array in the variable multy_array
+let multy_array = createMArray();
 
-    drawOrganisms(grid);
+
+//setting an interval for 100 ms to loop the given function "run".
+setInterval(run, 100);
+
+//run();
+
+
+function run(){
+
+    multy_array  = findNeighbours(multy_array);
+    createGrid(multy_array);
+    
 }
 
 
-//  Here I am iterating thru the Grid array and I am filling all the elements with color
-function drawOrganisms(grid){
-    console.log(grid);
+// this function creates draws lines with the functions from the Canvas API.
 
-    for(let c = 0; c < grid.length; c++){
-        for(let r = 0; r < grid.length; r++){
-            
-            let cell = grid[c][r];
+function createGrid(multy_array){
+    let curr_cell;
+    for(let c = 0; c < multy_array.length; c++){
+        for(let r = 0; r < multy_array[c].length; r++){
+
+            curr_cell = multy_array[c][r];
 
             ctx.beginPath();
             ctx.rect(c * resolution, r * resolution, resolution, resolution);
-            if(cell == 1){
-                ctx.fillStyle = black;
+            
+            if(curr_cell){
+                ctx.fillStyle = "black";
             }else{
-                ctx.fillStyle = white;
+                ctx.fillStyle = "white";
             }
+            
             ctx.fill();
+            ctx.stroke();
         }
     }
-    
-    getNeighbours(grid);
-
 }
 
-// Here I iterate thru the returned grid and making acopy of the array with the Map function
-// then I check the the neighbours with a third and fourth (for cicle).  
+// this function creates  a copy of "multy_array" varriable, next, I itterate trough the multiarray and start to look for the neigbours with an additional for cicle.
+// this is done by checking the elements starting from my current position -1 to 2;
+function findNeighbours(multy_array){
+    let copy = multy_array.map(arr => [...arr]);
+    let curr_cell_neighbours;
+    let curr_cell = [];
+    let cell_x;
+    let cell_y;
+    for(let c = 0; c < multy_array.length; c++){
+        for(let r = 0; r < multy_array[c].length; r++){
+            curr_cell = multy_array[c][r];
+            let neigbours = 0;
 
-function getNeighbours(grid){
-    let arr_neighbour = grid.map(arr => [...arr]);
-    let number_of_neigbours = 0;
-    let neighbour;
-    for(let c = 0; c < grid.length; c++){
-        for(let r = 0; r < grid.length; r++){
-            let cell = grid[c][r];
-            for(var x = -1; x < 2; x++){
-                for(y = -1; y < 2; y++){
-                    if(x === 0 && y === 0) continue;
-                    if(c + x >= 0 && r + y >=0 && c + x < cols && r + y < rows){
-                        neighbour = grid[c + x][r + y];
-                        number_of_neigbours += neighbour;
+            //checking neighbours 
+            
+            for(let i = -1; i < 2; i++){
+                for(let j = -1; j < 2; j++){
+                    if(i === 0 && j === 0){
+                        continue;
+                    }
+                    cell_x = c + i;
+                    cell_y = r + j;
+
+                    //Here I check for the edges, when the current cell is on the edge, it will get undefind if the check for the neigbours goes out of the array. 
+                    if(cell_x >= 0 && cell_y >= 0 && cell_x < cols && cell_y < rows){
+                        curr_cell_neighbours = multy_array[cell_x][cell_y];
+                        
+                        neigbours += curr_cell_neighbours;
                     }
                 }
             }
-            //console.log(cell);
-            if(cell === 1 && number_of_neigbours < 2){
-                arr_neighbour[c][r] = 0;
-
-            }else if(cell === 1 && number_of_neigbours > 3){
-                arr_neighbour[c][r] = 0;
-            }else if(cell == 0 && number_of_neigbours === 3){
-                arr_neighbour[c][r] = 1;
+            // The Rules of game of life 
+            if(curr_cell === 1 && neigbours < 2){
+                
+                copy[c][r] = 0; 
+               
+            }else if(curr_cell === 1 && neigbours > 3){
+               
+                copy[c][r] = 0;
+            }else if(curr_cell === 0 && neigbours === 3){
+               
+                copy[c][r] = 1;
             }
         }
+        
     }
-} 
+
+    return copy;
+}
