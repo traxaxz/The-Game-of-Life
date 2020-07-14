@@ -1,11 +1,36 @@
+
 let canvas = document.getElementById('canvas');
-canvas.width = 1360;
+canvas.width = 700;
 canvas.height = 700;
 
 let ctx = canvas.getContext('2d');
 let resolution = 10;
 let cols = canvas.width / resolution;
 let rows = canvas.height / resolution;
+
+// function createButtons(){
+//     const div = document.getElementById('container');
+//     //console.log(div);
+   
+//     let buttons = ['input','input', 'button'];
+//     for(let i = 0; i < buttons.length; i++){
+//         //console.log(buttons[i]);
+//         let temp_elem = document.createElement(buttons[i]);
+//         buttons[i] == 'input' ?  temp_elem.placeholder = 'input' :
+//         buttons[i] == 'button' ? temp_elem.innerHTML = 'button' :
+//         console.log(" no elements");
+
+
+//         //console.log(temp_elem);
+//         console.log(div);
+//         div.appendChild(temp_elem);
+//     }
+    
+   
+// }
+
+
+//createButtons();
 
 
 
